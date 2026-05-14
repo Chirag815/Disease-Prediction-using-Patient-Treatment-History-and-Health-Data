@@ -1,0 +1,643 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    body {
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .page-header {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        animation: fadeInDown 0.8s ease;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-header h1 {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .page-header p {
+        color: #6b7280;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* Summary Cards */
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .summary-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.8s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .summary-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .summary-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(102, 126, 234, 0.3);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .summary-card:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .summary-card:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .summary-card:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        color: #1f2937;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .accuracy-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .matrix-mini-table {
+        background: #f9fafb;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .matrix-mini-table table {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .matrix-mini-table td {
+        padding: 0.8rem;
+        border: 2px solid #e5e7eb;
+    }
+
+    .matrix-mini-table td:nth-child(1) {
+        background: #dbeafe;
+        font-weight: 600;
+    }
+
+    .matrix-mini-table td:nth-child(2) {
+        background: #fee2e2;
+        font-weight: 600;
+    }
+
+    .matrix-mini-table tr:nth-child(2) td:nth-child(1) {
+        background: #fef3c7;
+    }
+
+    .matrix-mini-table tr:nth-child(2) td:nth-child(2) {
+        background: #d1fae5;
+    }
+
+    /* Detailed Table Section */
+    .detailed-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        animation: zoomIn 0.8s ease;
+        animation-delay: 0.4s;
+        opacity: 0;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .section-title {
+        color: #667eea;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+
+    .main-table {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-dark {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .table-dark th {
+        border: none;
+        padding: 1.2rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .main-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .main-table tbody tr:hover {
+        background: linear-gradient(to right, #f3f4f6, #e5e7eb);
+        transform: scale(1.01);
+    }
+
+    .main-table tbody td {
+        padding: 1.5rem;
+        vertical-align: middle;
+    }
+
+    .main-table tbody td:first-child {
+        font-weight: 700;
+        color: #667eea;
+        font-size: 1.1rem;
+    }
+
+    .main-table tbody td:nth-child(2) {
+        font-weight: 700;
+        color: #10b981;
+        font-size: 1.2rem;
+    }
+
+    .nested-matrix {
+        margin: 0;
+    }
+
+    .nested-matrix td {
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        font-weight: 600;
+    }
+
+    .nested-matrix tr:first-child td:first-child {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        color: #1e40af;
+    }
+
+    .nested-matrix tr:first-child td:last-child {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+    }
+
+    .nested-matrix tr:last-child td:first-child {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+    }
+
+    .nested-matrix tr:last-child td:last-child {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+    }
+
+    /* Legend */
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .legend-color {
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+        border: 2px solid #e5e7eb;
+    }
+
+    .legend-color.tn {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    }
+
+    .legend-color.fp {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+    }
+
+    .legend-color.fn {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+    }
+
+    .legend-color.tp {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    }
+
+    .legend-text {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .summary-cards {
+            grid-template-columns: 1fr;
+        }
+
+        .detailed-section {
+            padding: 1.5rem;
+        }
+
+        .visual-section {
+            padding: 1.5rem;
+        }
+
+        .visual-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Visual Matrix Section */
+    .visual-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        margin-top: 3rem;
+        animation: slideInUp 0.8s ease;
+        animation-delay: 0.6s;
+        opacity: 0;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .visual-title {
+        color: #667eea;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .visual-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+
+    .visual-subtitle {
+        text-align: center;
+        color: #6b7280;
+        font-size: 1.05rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .visual-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    .visual-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 2px solid #e5e7eb;
+    }
+
+    .visual-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        border-color: #667eea;
+    }
+
+    .visual-card h4 {
+        color: #667eea;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-align: center;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .visual-card .icon {
+        font-size: 1.5rem;
+    }
+
+    .visual-image {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .visual-card:hover .visual-image {
+        transform: scale(1.05);
+    }
+
+    .visual-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid #e5e7eb;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+</style>
+</head>
+
+<body>
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>📊 Confusion Matrix Summary</h1>
+            <p>Detailed performance metrics for all disease prediction models with full confusion matrix breakdown</p>
+        </div>
+
+        <!-- Summary Cards -->
+
+
+        <!-- Detailed Table Section -->
+        <div class="detailed-section">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center main-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Disease</th>
+                            <th>Accuracy (%)</th>
+                            <th>Confusion Matrix (Full Description)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Diabetes -->
+                        <tr>
+                            <td><strong>Diabetes Prediction</strong></td>
+                            <td>87.50%</td>
+                            <td>
+                                <table class="table table-sm table-bordered text-center nested-matrix">
+                                    <tr>
+                                        <td><strong>True Negative (TN)</strong><br>81</td>
+                                        <td><strong>False Positive (FP)</strong><br>19</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>False Negative (FN)</strong><br>6</td>
+                                        <td><strong>True Positive (TP)</strong><br>94</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- Heart Disease -->
+                        <tr>
+                            <td><strong>Heart Disease Prediction</strong></td>
+                            <td>84.55%</td>
+                            <td>
+                                <table class="table table-sm table-bordered text-center nested-matrix">
+                                    <tr>
+                                        <td><strong>True Negative (TN)</strong><br>712</td>
+                                        <td><strong>False Positive (FP)</strong><br>7</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>False Negative (FN)</strong><br>124</td>
+                                        <td><strong>True Positive (TP)</strong><br>5</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- Breast Cancer -->
+                        <tr>
+                            <td><strong>Breast Cancer Prediction</strong></td>
+                            <td>98.25%</td>
+                            <td>
+                                <table class="table table-sm table-bordered text-center nested-matrix">
+                                    <tr>
+                                        <td><strong>True Negative (TN)</strong><br>41</td>
+                                        <td><strong>False Positive (FP)</strong><br>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>False Negative (FN)</strong><br>1</td>
+                                        <td><strong>True Positive (TP)</strong><br>71</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color tn"></div>
+                    <span class="legend-text">True Negative (TN)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color fp"></div>
+                    <span class="legend-text">False Positive (FP)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color fn"></div>
+                    <span class="legend-text">False Negative (FN)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color tp"></div>
+                    <span class="legend-text">True Positive (TP)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual Matrix Images Section -->
+        <div class="visual-section">
+            <h2 class="visual-title">📈 Visual Confusion Matrix Representations</h2>
+            <p class="visual-subtitle">
+                Graphical heatmap visualizations of model predictions showing classification performance
+            </p>
+
+            <div class="visual-grid">
+                <!-- Diabetes Matrix Image -->
+                <div class="visual-card">
+                    <h4><span class="icon">🩺</span> Diabetes Confusion Matrix</h4>
+                    <img src="{{ url_for('static', filename='images/diabetes_heatmap.png') }}"
+                        style="height: 400px;width:350px" alt="Diabetes Heatmap">
+
+                    <div class="visual-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Accuracy</div>
+                            <div class="stat-value">87.50%</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Heart Disease Matrix Image -->
+                <div class="visual-card">
+                    <h4><span class="icon">🫀</span> Heart Disease Confusion Matrix</h4>
+                    <img src="{{ url_for('static', filename='images/heart_disease_heatmap.png') }}"
+                        style="height: 400px;width:350px" alt="Diabetes Heatmap">
+
+                    <div class="visual-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Accuracy</div>
+                            <div class="stat-value">84.55%</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Breast Cancer Matrix Image -->
+                <div class="visual-card">
+                    <h4><span class="icon">🎗️</span> Breast Cancer Confusion Matrix</h4>
+                    <img src="{{ url_for('static', filename='images/breast_cancer_heatmap.png') }}"
+                        style="height: 400px;width:350px" alt="Diabetes Heatmap">
+
+                    <div class="visual-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Accuracy</div>
+                            <div class="stat-value">98.25%</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}

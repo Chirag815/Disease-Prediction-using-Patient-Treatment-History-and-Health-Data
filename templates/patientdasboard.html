@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancer Prediction Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-header h3 i {
+            margin-right: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid white;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ec4899;
+            font-size: 40px;
+            font-weight: 700;
+        }
+
+        .profile-info h3 {
+            margin: 0 0 5px;
+            font-size: 28px;
+        }
+
+        .profile-info p {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+
+        .prediction-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .prediction-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-5px);
+            border-color: #ec4899;
+            box-shadow: 0 5px 20px rgba(236, 72, 153, 0.2);
+        }
+
+        .prediction-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 20px;
+        }
+
+        .prediction-icon.heart {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .prediction-icon.lungs {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .prediction-icon.breast {
+            background: rgba(236, 72, 153, 0.1);
+            color: #ec4899;
+        }
+
+        .prediction-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .prediction-card p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .btn-predict {
+            background: #ec4899;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-predict:hover {
+            background: #db2777;
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 15px;
+        }
+
+        .stat-icon.pink {
+            background: rgba(236, 72, 153, 0.1);
+            color: #ec4899;
+        }
+
+        .stat-icon.blue {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .stat-icon.green {
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .stat-card p {
+            color: #7f8c8d;
+            margin: 5px 0 0;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .btn-view-all {
+            color: #ec4899;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-view-all:hover {
+            text-decoration: underline;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .history-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .history-icon.heart {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .history-icon.lungs {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .history-icon.breast {
+            background: rgba(236, 72, 153, 0.1);
+            color: #ec4899;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+
+        .history-date {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .history-result {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .result-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .result-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .result-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ec4899;
+        }
+
+        .info-box h4 {
+            color: #ec4899;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .info-box p {
+            color: #555;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 968px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .prediction-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-shield-virus"></i> CancerPredict</h3>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active">
+                <i class="fas fa-th-large"></i> Dashboard
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-heartbeat"></i> Heart Cancer
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-lungs"></i> Lung Cancer
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-ribbon"></i> Breast Cancer
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-history"></i> Prediction History
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-chart-line"></i> My Reports
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-book-medical"></i> Resources
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-user"></i> My Profile
+            </li>
+            <li class="nav-item">
+                <i class="fas fa-cog"></i> Settings
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-avatar">JD</div>
+            <div class="profile-info">
+                <h3>John Doe</h3>
+                <p><i class="fas fa-id-card"></i> Patient ID: #PT-1025</p>
+                <p><i class="fas fa-birthday-cake"></i> Age: 45 years | <i class="fas fa-venus-mars"></i> Male</p>
+                <p><i class="fas fa-envelope"></i> john.doe@email.com | <i class="fas fa-phone"></i> +1 (555) 123-4567
+                </p>
+            </div>
+        </div>
+
+        <!-- Prediction Cards -->
+        <div class="prediction-cards">
+            <div class="prediction-card">
+                <div class="prediction-icon heart">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h3>Heart Cancer Prediction</h3>
+                <p>Analyze your cardiac health data to predict heart cancer risk</p>
+                <button class="btn-predict">Start Prediction</button>
+            </div>
+
+            <div class="prediction-card">
+                <div class="prediction-icon lungs">
+                    <i class="fas fa-lungs"></i>
+                </div>
+                <h3>Lung Cancer Prediction</h3>
+                <p>Evaluate lung function and risk factors for early detection</p>
+                <button class="btn-predict">Start Prediction</button>
+            </div>
+
+            <div class="prediction-card">
+                <div class="prediction-icon breast">
+                    <i class="fas fa-ribbon"></i>
+                </div>
+                <h3>Breast Cancer Prediction</h3>
+                <p>Assess breast health indicators and risk probability</p>
+                <button class="btn-predict">Start Prediction</button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon pink">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3>12</h3>
+                <p>Total Predictions</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>3</h3>
+                <p>This Month</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <h3>8</h3>
+                <p>Reports Generated</p>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Recent Predictions -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-history"></i> Recent Predictions</h3>
+                    <a href="#" class="btn-view-all">View All</a>
+                </div>
+                <div>
+                    <div class="history-item">
+                        <div class="history-icon breast">
+                            <i class="fas fa-ribbon"></i>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-title">Breast Cancer Screening</div>
+                            <div class="history-date">December 10, 2025</div>
+                        </div>
+                        <span class="history-result result-low">Low Risk</span>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-icon lungs">
+                            <i class="fas fa-lungs"></i>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-title">Lung Cancer Assessment</div>
+                            <div class="history-date">December 5, 2025</div>
+                        </div>
+                        <span class="history-result result-medium">Medium Risk</span>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-icon heart">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-title">Heart Cancer Analysis</div>
+                            <div class="history-date">November 28, 2025</div>
+                        </div>
+                        <span class="history-result result-low">Low Risk</span>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-icon breast">
+                            <i class="fas fa-ribbon"></i>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-title">Breast Cancer Screening</div>
+                            <div class="history-date">November 15, 2025</div>
+                        </div>
+                        <span class="history-result result-low">Low Risk</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-info-circle"></i> Important Information</h3>
+                </div>
+                <div>
+                    <div class="info-box" style="margin-bottom: 15px;">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Disclaimer</h4>
+                        <p>These predictions are for informational purposes only and should not replace professional
+                            medical advice. Always consult with healthcare professionals.</p>
+                    </div>
+
+                    <div class="info-box" style="margin-bottom: 15px;">
+                        <h4><i class="fas fa-calendar-check"></i> Next Steps</h4>
+                        <p>Schedule regular checkups and screenings based on your age, family history, and risk factors.
+                            Early detection saves lives.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-shield-alt"></i> Data Privacy</h4>
+                        <p>Your health data is encrypted and securely stored. We follow strict HIPAA compliance
+                            guidelines to protect your privacy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info Section -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-lightbulb"></i> How It Works</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="text-align: center; padding: 20px;">
+                    <div
+                        style="width: 60px; height: 60px; background: rgba(236, 72, 153, 0.1); color: #ec4899; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px;">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h4 style="font-size: 16px; margin-bottom: 10px;">1. Enter Your Data</h4>
+                    <p style="color: #7f8c8d; font-size: 14px;">Fill in the required medical parameters and health
+                        information</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div
+                        style="width: 60px; height: 60px; background: rgba(236, 72, 153, 0.1); color: #ec4899; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px;">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4 style="font-size: 16px; margin-bottom: 10px;">2. AI Analysis</h4>
+                    <p style="color: #7f8c8d; font-size: 14px;">Our machine learning model analyzes your data patterns
+                    </p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div
+                        style="width: 60px; height: 60px; background: rgba(236, 72, 153, 0.1); color: #ec4899; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px;">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4 style="font-size: 16px; margin-bottom: 10px;">3. Get Results</h4>
+                    <p style="color: #7f8c8d; font-size: 14px;">Receive detailed risk assessment and recommendations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

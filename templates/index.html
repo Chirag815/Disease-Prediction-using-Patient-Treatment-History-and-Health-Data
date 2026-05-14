@@ -1,0 +1,720 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .btn-train {
+        background: white;
+        color: #dc2626;
+        font-weight: 600;
+        padding: 0.6rem 2rem;
+        border-radius: 30px;
+        border: 2px solid white;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-train:hover {
+        background: transparent;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
+    }
+
+    .navbar-toggler {
+        border: 2px solid white;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+    }
+
+    @media (max-width: 991px) {
+        .navbar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-link {
+            margin: 0.25rem 0;
+        }
+
+        .btn-train {
+            margin-top: 1rem;
+            width: 100%;
+        }
+    }
+
+    .container {
+        margin-top: 2rem;
+    }
+
+    /* Swiper Slider Styles */
+    .swiper-container {
+        width: 100%;
+        padding: 50px 0;
+    }
+
+    .swiper-slide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .disease-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: all 0.3s ease;
+        height: 450px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .disease-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .disease-card.diabetes {
+        border-top: 5px solid #667eea;
+    }
+
+    .disease-card.heart {
+        border-top: 5px solid #dc2626;
+    }
+
+    .disease-card.cancer {
+        border-top: 5px solid #ec4899;
+    }
+
+    .disease-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+
+    .disease-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .disease-card.diabetes .disease-title {
+        color: #667eea;
+    }
+
+    .disease-card.heart .disease-title {
+        color: #dc2626;
+    }
+
+    .disease-card.cancer .disease-title {
+        color: #ec4899;
+    }
+
+    .disease-description {
+        color: #666;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        flex-grow: 1;
+    }
+
+    .predict-btn {
+        padding: 12px 40px;
+        border-radius: 50px;
+        border: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        color: white;
+    }
+
+    .predict-btn.diabetes {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .predict-btn.heart {
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    }
+
+    .predict-btn.cancer {
+        background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+    }
+
+    .predict-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+
+    .swiper-pagination-bullet {
+        width: 12px;
+        height: 12px;
+        background: #ec4899;
+        opacity: 0.5;
+    }
+
+    .swiper-pagination-bullet-active {
+        opacity: 1;
+        background: #ec4899;
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+        color: #ec4899;
+    }
+
+    /* Hero Banner Slider */
+    .hero-banner {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hero-swiper {
+        width: 100%;
+        height: 600px;
+    }
+
+    .hero-slide {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-slide::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: white;
+        max-width: 800px;
+        padding: 0 20px;
+        animation: fadeInUp 1s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .hero-content h1 {
+        font-size: 4rem;
+        font-weight: 900;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        line-height: 1.2;
+    }
+
+    .hero-content p {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-btn {
+        background: white;
+        color: #ec4899;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(255, 255, 255, 0.5);
+        color: #ec4899;
+    }
+
+    .hero-swiper .swiper-pagination-bullet {
+        width: 15px;
+        height: 15px;
+        background: white;
+        opacity: 0.6;
+    }
+
+    .hero-swiper .swiper-pagination-bullet-active {
+        opacity: 1;
+        background: #ec4899;
+    }
+
+    .hero-swiper .swiper-button-next,
+    .hero-swiper .swiper-button-prev {
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .hero-swiper {
+            height: 500px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+        }
+    }
+
+    .hero-section {
+        text-align: center;
+        padding: 60px 0 20px;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .features {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 80px 0;
+        margin-top: 60px;
+    }
+
+    .features-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .features h2 {
+        text-align: center;
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 20px;
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .features h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, #ec4899, #be185d);
+        border-radius: 2px;
+    }
+
+    .features-intro {
+        text-align: center;
+        max-width: 900px;
+        margin: 0 auto 60px;
+        color: #4b5563;
+        font-size: 1.15rem;
+        line-height: 1.8;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #ec4899, #be185d);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(236, 72, 153, 0.2);
+    }
+
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .feature-icon {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.2) rotate(5deg);
+    }
+
+    .feature-card h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 15px;
+    }
+
+    .feature-card p {
+        color: #6b7280;
+        line-height: 1.7;
+        font-size: 1rem;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 15px;
+    }
+
+    .feature-list li {
+        color: #4b5563;
+        margin-bottom: 10px;
+        padding-left: 25px;
+        position: relative;
+        line-height: 1.6;
+    }
+
+    .feature-list li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #ec4899;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .highlight-box {
+        background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+        border-left: 4px solid #ec4899;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 15px;
+    }
+
+    .highlight-box strong {
+        color: #be185d;
+    }
+
+    @media (max-width: 768px) {
+        .features h2 {
+            font-size: 2rem;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .feature-card {
+            padding: 30px 20px;
+        }
+    }
+</style>
+
+<!-- Hero Banner Slider -->
+<div class="hero-banner">
+    <div class="swiper hero-swiper">
+        <div class="swiper-wrapper">
+            <!-- Slide 1 -->
+            <div class="swiper-slide">
+                <div class="hero-slide"
+                    style="background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1920&q=80');">
+                    <div class="hero-content">
+                        <h1>Advanced AI Health Prediction</h1>
+                        <p>Empowering your health decisions with cutting-edge machine learning technology</p>
+                        <a href="#services" class="hero-btn">Explore Services</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="swiper-slide">
+                <div class="hero-slide"
+                    style="background-image: url('https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1920&q=80');">
+                    <div class="hero-content">
+                        <h1>Diabetes Risk Assessment</h1>
+                        <p>Early detection saves lives. Get your personalized diabetes risk analysis today</p>
+                        <a href="/diabetes" class="hero-btn">Check Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="swiper-slide">
+                <div class="hero-slide"
+                    style="background-image: url('https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=1920&q=80');">
+                    <div class="hero-content">
+                        <h1>Heart Disease Prevention</h1>
+                        <p>Comprehensive cardiovascular health assessment with 15+ clinical parameters</p>
+                        <a href="/heart" class="hero-btn">Start Assessment</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="swiper-slide">
+                <div class="hero-slide"
+                    style="background-image: url('https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1920&q=80');">
+                    <div class="hero-content">
+                        <h1>Breast Cancer Screening</h1>
+                        <p>Advanced cell analysis for early breast cancer detection and prevention</p>
+                        <a href="/cancer" class="hero-btn">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- Navigation buttons -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+</div>
+
+<div class="container" id="services">
+    <div class="hero-section">
+        <h1 class="hero-title">AI-Powered Disease Prediction</h1>
+        <p class="hero-subtitle">Get accurate predictions for multiple diseases using advanced machine learning
+            models. Choose a prediction service below.</p>
+    </div>
+
+    <div class="swiper swiper-container">
+        <div class="swiper-wrapper">
+            <!-- Diabetes Slide -->
+            <div class="swiper-slide">
+                <div class="disease-card diabetes">
+                    <div>
+                        <div class="disease-icon">🩺</div>
+                        <h2 class="disease-title">Diabetes Prediction</h2>
+                        <p class="disease-description">
+                            Predict diabetes risk based on clinical measurements including glucose levels, BMI,
+                            blood pressure, and family history. Our model analyzes 8 key health indicators.
+                        </p>
+                    </div>
+                    <a href="/diabetes" class="predict-btn diabetes">Start Prediction</a>
+                </div>
+            </div>
+
+            <!-- Heart Disease Slide -->
+            <div class="swiper-slide">
+                <div class="disease-card heart">
+                    <div>
+                        <div class="disease-icon">🫀</div>
+                        <h2 class="disease-title">Heart Disease Prediction</h2>
+                        <p class="disease-description">
+                            Assess cardiovascular disease risk using comprehensive health data including
+                            cholesterol, blood pressure, heart rate, and lifestyle factors. 15+ parameters analyzed.
+                        </p>
+                    </div>
+                    <a href="/heart" class="predict-btn heart">Start Prediction</a>
+                </div>
+            </div>
+
+            <!-- Breast Cancer Slide -->
+            <div class="swiper-slide">
+                <div class="disease-card cancer">
+                    <div>
+                        <div class="disease-icon">🎗️</div>
+                        <h2 class="disease-title">Breast Cancer Prediction</h2>
+                        <p class="disease-description">
+                            Evaluate breast cancer risk through cell nucleus characteristics analysis. Our model
+                            examines mean radius, texture, perimeter, area, and smoothness measurements.
+                        </p>
+                    </div>
+                    <a href="/cancer" class="predict-btn cancer">Start Prediction</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- Navigation buttons -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+</div>
+
+<section class="features" id="features">
+    <div class="features-container">
+        <h2>⭐ Why Choose Our Disease Prediction System?</h2>
+        <p class="features-intro">
+            Our AI-powered Disease Prediction System is designed to assist healthcare professionals, researchers, and
+            individuals by providing fast, accurate, and easy-to-understand medical predictions. Here's why our solution
+            stands out:
+        </p>
+
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>✅ Advanced Hybrid Stacking Machine Learning Model</h3>
+                <p>We use a Hybrid Stacking Classifier that combines the strengths of multiple algorithms:</p>
+                <ul class="feature-list">
+                    <li><strong>Random Forest</strong> → handles complex patterns</li>
+                    <li><strong>Gradient Boosting</strong> → strong accuracy for structured data</li>
+                    <li><strong>SVM</strong> → powerful decision boundaries</li>
+                    <li><strong>Logistic Regression</strong> (meta-learner) → combines all predictions</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>This unique ensemble ensures higher accuracy than traditional single models.</strong>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="feature-icon">🏥</div>
+                <h3>✅ Supports Multiple Diseases in One Platform</h3>
+                <p>Our system predicts:</p>
+                <ul class="feature-list">
+                    <li><strong>Diabetes</strong> → Risk assessment based on clinical measurements</li>
+                    <li><strong>Heart Disease</strong> → Cardiovascular health evaluation</li>
+                    <li><strong>Breast Cancer</strong> → Cell nucleus characteristics analysis</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Each disease has an individually optimized pipeline and dataset cleaning process.</strong>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>✅ Auto-Training & Real-Time Predictions</h3>
+                <p>Models can be:</p>
+                <ul class="feature-list">
+                    <li><strong>Auto-trained</strong> with one click</li>
+                    <li><strong>Updated</strong> as new data becomes available</li>
+                    <li><strong>Used instantly</strong> for predictions through an intuitive web interface</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Predictions run in milliseconds, giving instant results.</strong>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+
+
+            <!-- Feature 6 -->
+
+        </div>
+    </div>
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+<script>
+    // Initialize Hero Banner Swiper
+    const heroSwiper = new Swiper('.hero-swiper', {
+        slidesPerView: 1,
+        loop: true,
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+        },
+        effect: 'fade',
+        fadeEffect: {
+            crossFade: true
+        },
+        pagination: {
+            el: '.hero-swiper .swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.hero-swiper .swiper-button-next',
+            prevEl: '.hero-swiper .swiper-button-prev',
+        },
+    });
+
+    // Initialize Disease Cards Swiper
+    const swiper = new Swiper('.swiper-container', {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-container .swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-container .swiper-button-next',
+            prevEl: '.swiper-container .swiper-button-prev',
+        },
+        breakpoints: {
+            768: {
+                slidesPerView: 2,
+                spaceBetween: 30,
+            },
+            1024: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+            }
+        }
+    });
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+
+{% endblock %}

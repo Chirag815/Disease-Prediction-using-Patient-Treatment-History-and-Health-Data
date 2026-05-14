@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Multi-Disease Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        .navbar-custom {
+            background: #ec4899;
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white !important;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand::before {
+            content: "🏥";
+            font-size: 2rem;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 0.5rem 1.5rem !important;
+            margin: 0 0.25rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: white;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::before {
+            width: 80%;
+        }
+
+        .btn-train {
+            background: white;
+            color: #dc2626;
+            font-weight: 600;
+            padding: 0.6rem 2rem;
+            border-radius: 30px;
+            border: 2px solid white;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-train:hover {
+            background: transparent;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
+        }
+
+        .navbar-toggler {
+            border: 2px solid white;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+        }
+
+        @media (max-width: 991px) {
+            .navbar-nav {
+                padding: 1rem 0;
+            }
+
+            .nav-link {
+                margin: 0.25rem 0;
+            }
+
+            .btn-train {
+                margin-top: 1rem;
+                width: 100%;
+            }
+        }
+
+        .container {
+            margin-top: 2rem;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            color: #ec4899;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #ec4899;
+        }
+
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: #ec4899;
+            padding-left: 5px;
+        }
+
+        .footer-links a::before {
+            content: "▸";
+            color: #ec4899;
+        }
+
+        .contact-info {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .contact-info li {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .contact-info li span {
+            font-size: 1.2rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background: #ec4899;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .footer-bottom a {
+            color: #ec4899;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-bottom a:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container mt-0">
+            <a class="navbar-brand" href="/">HealthAI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/diabetes">Diabetes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/heart">Heart</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cancer">Breast Cancer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                </ul>
+                <a class="btn btn-train" href="/train_all">Train All Models</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid p-0 m-0">
+        {% block content %}
+        <h1>Welcome to HealthAI</h1>
+        <p>Select a prediction model from the navigation menu above.</p>
+        {% endblock %}
+    </div>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <!-- About Section -->
+                <div class="footer-section">
+                    <h3>About HealthAI</h3>
+                    <p>
+                        HealthAI is an advanced AI-powered platform providing accurate disease predictions using
+                        cutting-edge machine learning models. We help healthcare professionals and individuals make
+                        informed decisions about their health.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook">📘</a>
+                        <a href="#" aria-label="Twitter">🐦</a>
+                        <a href="#" aria-label="LinkedIn">💼</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/diabetes">Diabetes Prediction</a></li>
+                        <li><a href="/heart">Heart Disease Prediction</a></li>
+                        <li><a href="/cancer">Breast Cancer Prediction</a></li>
+                        <li><a href="/train_all">Train Models</a></li>
+                        <li><a href="/patientdashboard">Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <!-- Services -->
+                <div class="footer-section">
+                    <h3>Our Services</h3>
+                    <ul class="footer-links">
+                        <li><a href="/diabetes">Risk Assessment</a></li>
+                        <li><a href="#">Health Analytics</a></li>
+                        <li><a href="#">AI Diagnostics</a></li>
+                        <li><a href="#">Preventive Care</a></li>
+                        <li><a href="#">Medical Consultation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul class="contact-info">
+                        <li>
+                            <span>📍</span>
+                            <div>123 Medical Plaza, Healthcare District, City 12345</div>
+                        </li>
+                        <li>
+                            <span>📞</span>
+                            <div>+1 (555) 123-4567</div>
+                        </li>
+                        <li>
+                            <span>📧</span>
+                            <div>info@healthai.com</div>
+                        </li>
+                        <li>
+                            <span>🕒</span>
+                            <div>24/7 Available</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>
+                    &copy; 2024 HealthAI. All rights reserved. |
+                    <a href="#">Privacy Policy</a> |
+                    <a href="#">Terms of Service</a> |
+                    <a href="#">Disclaimer</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
